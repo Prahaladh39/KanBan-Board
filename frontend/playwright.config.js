@@ -1,4 +1,5 @@
 // playwright.config.js
+/*
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
@@ -26,3 +27,18 @@ export default defineConfig({
     timeout: 60 * 60 * 1000, // Wait time for server start in milliseconds
   },
 });
+*/
+// frontend/playwright.config.js
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+const config = {
+  testDir: "./src/tests/e2e",
+  timeout: 30000,
+  retries: 0,
+  use: {
+    baseURL: "http://localhost:3000",
+    browserName: "chromium",
+    headless: false,
+  },
+};
+
+export default config;

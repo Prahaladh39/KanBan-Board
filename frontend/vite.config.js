@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-
+import { configDefaults } from "vitest/config";
 // https://vite.dev/config/
 export default defineConfig({
   server: {
@@ -18,7 +18,12 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/setupTests.js",
-    exclude: ["node_modules", "src/tests/e2e"],
+    exclude: [
+      "node_modules",
+      "src/tests/e2e",
+      ...configDefaults.exclude,
+      "e2e/*",
+    ],
   },
   plugins: [react()],
 });

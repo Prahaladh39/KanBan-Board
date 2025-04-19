@@ -1,6 +1,7 @@
 import React from "react";
 import KanbanBoard from "./components/KanbanBoard";
-
+import "./App.css";
+// adjust path if needed
 function App() {
   return (
     <div className="App">
@@ -9,5 +10,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
