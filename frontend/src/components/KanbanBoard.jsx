@@ -10,13 +10,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import socket from "../utils/socket";
+
 const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskFile, setNewTaskFile] = useState(null);
   const [newTaskPriority, setNewTaskPriority] = useState("Medium");
   const [newTaskCategory, setNewTaskCategory] = useState("Feature");
+
   const getTaskCounts = (tasks) => {
     const counts = {
       todo: 0,
@@ -72,7 +76,13 @@ const KanbanBoard = () => {
   }, [tasks]);
 
   const handleCreateTask = () => {
-    if (!newTaskTitle.trim()) return;
+    if (!newTaskTitle.trim()) {
+      toast.error("Task title cannot be empty!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
 
     const reader = new FileReader();
     const id = Date.now().toString();
@@ -95,6 +105,11 @@ const KanbanBoard = () => {
       setNewTaskPriority("Low");
       setNewTaskCategory("Feature");
       setNewTaskFile(null);
+
+      toast.success("Task created successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     };
 
     if (newTaskFile) {
@@ -105,22 +120,33 @@ const KanbanBoard = () => {
     }
   };
 
-  const handleEditTask = (id, newTitle) => {
+  const handleEditTask = (id, field, value) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === id ? { ...task, title: newTitle } : task
+        task.id === id ? { ...task, [field]: value } : task
       )
     );
   };
 
   const handleUpdateTask = (updatedTask) => {
     socket.emit("task:update", updatedTask);
-    // alert("Sucessfuly Updated");
+    toast.success("Task updated successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   const handleDeleteTask = (id) => {
     socket.emit("task:delete", id);
-    // alert("Deleted Sucessfully");
+    toast.info("Task deleted successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+      icon: "🗑️",
+    });
   };
 
   const handleDragEnd = (result) => {
@@ -139,7 +165,37 @@ const KanbanBoard = () => {
       id: draggableId,
       newColumn: destination.droppableId,
     });
+
+    // Show toast when task is moved
+
     console.log("Drag result:", result);
+  };
+
+  // Get color based on priority
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "#ff6b6b";
+      case "Medium":
+        return "#feca57";
+      case "Low":
+        return "#1dd1a1";
+      default:
+        return "#dfe6e9";
+    }
+  };
+
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case "Feature":
+        return "✨";
+      case "Bug":
+        return "🐞";
+      case "Improvement":
+        return "🔄";
+      default:
+        return "📋";
+    }
   };
 
   const renderColumn = (status, title) => {
@@ -169,18 +225,53 @@ const KanbanBoard = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        style={{
+                          ...provided.draggableProps.style,
+                          borderLeft: `5px solid ${getPriorityColor(
+                            task.priority
+                          )}`,
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                        }}
                       >
-                        <input
-                          type="text"
-                          value={task.title}
-                          onChange={(e) =>
-                            handleEditTask(task.id, e.target.value)
-                          }
-                          className="task-edit-input"
-                        />
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <input
+                            type="text"
+                            value={task.title}
+                            onChange={(e) =>
+                              handleEditTask(task.id, "title", e.target.value)
+                            }
+                            className="task-edit-input"
+                            placeholder="edit title"
+                            style={{
+                              flex: 1,
+                              padding: "8px",
+                              fontSize: "16px",
+                              fontWeight: "500",
+                              border: "1px solid #e0e0e0",
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </div>
 
                         {task.attachments && task.attachments.length > 0 && (
-                          <div className="file-input" data-testid="task-card">
+                          <div
+                            className="file-input"
+                            data-testid="task-card"
+                            style={{
+                              marginBottom: "10px",
+                              backgroundColor: "#f0f0f0",
+                              padding: "6px 10px",
+                              borderRadius: "4px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
                             📎{" "}
                             <a
                               href={task.attachments[0].data}
@@ -188,31 +279,147 @@ const KanbanBoard = () => {
                               target="_blank"
                               data-testid="attachment-link"
                               rel="noopener noreferrer"
+                              style={{
+                                marginLeft: "5px",
+                                color: "#3498db",
+                                textDecoration: "none",
+                              }}
                             >
                               {task.attachments[0].name}
                             </a>
                           </div>
                         )}
 
-                        <div className="task-meta">
-                          <p>
-                            <strong>Priority:</strong> {task.priority}
-                          </p>
-                          <p>
-                            <strong>Category:</strong> {task.category}
-                          </p>
+                        <div className="task-meta" style={{ margin: "10px 0" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "8px",
+                              backgroundColor: "#f9f9f9",
+                              padding: "6px 10px",
+                              borderRadius: "4px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "20px",
+                                marginRight: "8px",
+                                color: getPriorityColor(task.priority),
+                                fontWeight: "bold",
+                              }}
+                            >
+                              ⚡
+                            </span>
+                            <strong style={{ marginRight: "8px" }}>
+                              Priority:
+                            </strong>
+                            <select
+                              value={task.priority}
+                              onChange={(e) =>
+                                handleEditTask(
+                                  task.id,
+                                  "priority",
+                                  e.target.value
+                                )
+                              }
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid #ddd",
+                                backgroundColor: "#fff",
+                                color: getPriorityColor(task.priority),
+                                fontWeight: "500",
+                                marginLeft: "auto",
+                              }}
+                            >
+                              <option value="Low">Low</option>
+                              <option value="Medium">Medium</option>
+                              <option value="High">High</option>
+                            </select>
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              backgroundColor: "#f9f9f9",
+                              padding: "6px 10px",
+                              borderRadius: "4px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "20px",
+                                marginRight: "8px",
+                              }}
+                            >
+                              {getCategoryIcon(task.category)}
+                            </span>
+                            <strong style={{ marginRight: "8px" }}>
+                              Category:
+                            </strong>
+                            <select
+                              value={task.category}
+                              onChange={(e) =>
+                                handleEditTask(
+                                  task.id,
+                                  "category",
+                                  e.target.value
+                                )
+                              }
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid #ddd",
+                                backgroundColor: "#fff",
+                                marginLeft: "auto",
+                              }}
+                            >
+                              <option value="Feature">Feature</option>
+                              <option value="Bug">Bug</option>
+                              <option value="Improvement">Improvement</option>
+                            </select>
+                          </div>
                         </div>
 
-                        <div className="task-buttons">
+                        <div
+                          className="task-buttons"
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginTop: "10px",
+                          }}
+                        >
                           <button
                             onClick={() => handleUpdateTask(task)}
                             className="btn-update"
+                            style={{
+                              backgroundColor: "#4CAF50",
+                              color: "white",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              fontWeight: "500",
+                            }}
                           >
                             Update
                           </button>
                           <button
                             onClick={() => handleDeleteTask(task.id)}
                             className="btn-delete"
+                            style={{
+                              backgroundColor: "#f44336",
+                              color: "white",
+                              border: "none",
+                              padding: "6px 12px",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              fontWeight: "500",
+                            }}
                           >
                             Delete
                           </button>
@@ -231,6 +438,7 @@ const KanbanBoard = () => {
 
   return (
     <>
+      <ToastContainer />
       <div className="kanban-container">
         <h1>Kanban Board</h1>
 
