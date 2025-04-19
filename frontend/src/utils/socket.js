@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 // ⚠️ Update the URL to your backend server if needed
-const socket = io("http://localhost:5000", {
+const socket = io("https://kanbanback-dcd7.onrender.com", {
   transports: ["websocket"],
   withCredentials: true,
 });
