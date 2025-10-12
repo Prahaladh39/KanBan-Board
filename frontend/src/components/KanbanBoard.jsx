@@ -486,6 +486,7 @@ const KanbanBoard = () => {
             Drag and place the card on the title (eg: In Progress) the card will
             be placed properly
           </p>
+          <p>There is a 50 secs lag when uploading the first task,Thanks!</p>
         </center>
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="kanban-board">
