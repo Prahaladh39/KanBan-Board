@@ -148,6 +148,10 @@ const KanbanBoard = () => {
       icon: "🗑️",
     });
   };
+// add a dummy function
+function hello() {
+  return "hi";
+}
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
