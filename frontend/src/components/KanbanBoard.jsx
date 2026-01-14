@@ -150,7 +150,7 @@ const KanbanBoard = () => {
   };
 // add a dummy function
 function hello() {
-  return "hi";
+  return "hello";
 }
 
   const handleDragEnd = (result) => {
