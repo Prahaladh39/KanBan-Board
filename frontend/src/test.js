@@ -34,5 +34,9 @@ function subtract(a,b){
   return 'hello'+c;
 }
 function multiply(a,b){
-  return a*b+10;
+ const c=a*b;
+  const extra=a+b;
+  const hey='hello';
+  const suk='life is hard'
+  return c;
 }
