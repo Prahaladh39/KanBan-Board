@@ -37,5 +37,6 @@ function subtract(a,b){
   const yes='no, its not easy';
   const amr='america loves oil';
   const dr='do does diddy';
-  return c+10;
+  const exc=a+b;
+  const final=c+exc
 }
