@@ -33,3 +33,7 @@ function subtract(a,b){
   const c=a+b;
   return 'hello'+c;
 }
+function multiply(a,b){
+  return a*b;
+}
+
