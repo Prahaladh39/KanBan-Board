@@ -29,3 +29,6 @@ async function add(userId: string, includePosts: boolean) {
     posts,
   };
 }
+function subtract(a,b){
+  return a-b;
+}
