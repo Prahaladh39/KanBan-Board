@@ -31,12 +31,7 @@ async function add(userId: string, includePosts: boolean) {
 }
 function subtract(a,b){
   const c=a+b;
-  return 'hello'+c;
-}
-function multiply(a,b){
- const c=a*b;
-  const extra=a+b;
-  const hey='hello';
-  const suk='life is hard'
-  return c;
+  const ex='hello'+c;
+  const nr='life is beatiful';
+  return c+10;
 }
