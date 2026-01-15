@@ -30,14 +30,8 @@ async function add(userId: string, includePosts: boolean) {
   };
 }
 function subtract(a,b){
-  const c=a+b;
+  const c=a-b;
   const ex='hello'+c;
   const nr='life is beatiful';
-  const fax='life is not easy mate';
-  const yes='no, its not easy';
-  const amr='america loves oil';
-  const dr='do does diddy';
-  const exc=a+b;
-  const final=c+exc
-  const exr='this is final'
+  return c;
 }
