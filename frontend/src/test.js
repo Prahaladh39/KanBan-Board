@@ -32,6 +32,6 @@ async function add(userId: string, includePosts: boolean) {
 function subtract(a,b){
   const c=a-b;
   const ex='hello'+c;
-  const nr='life is beatiful';
+  const nr='is life beautiful?';
   return c;
 }
