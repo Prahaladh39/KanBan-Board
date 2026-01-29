@@ -33,3 +33,15 @@ function subtract(a,b){
   const c=a-b;
   return a*b;
 }
+function startServer() {
+  const server = http.createServer((req, res) => {
+    
+    // Router Logic
+    if (req.method === "GET" && req.url === "/task2") {
+      handleTask2(req, res);
+    } else {
+      res.statusCode = 404;
+      res.end("Not Found");
+    }
+
+  });
